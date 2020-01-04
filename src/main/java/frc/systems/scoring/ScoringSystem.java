@@ -48,7 +48,7 @@ public class ScoringSystem extends RobotSystem {
         intake = Devices.getIntake();
         grabber = Devices.getGrabber();
         driveController = Devices.getDriverController();
-        opController = Devices.getOperatorController();
+        // opController = Devices.getOperatorController();
         ctrlMap = new HashMap<>();
 
         // ctrlMap.put(LiftControllers.MANUAL, new LiftManualController(opController, lift));

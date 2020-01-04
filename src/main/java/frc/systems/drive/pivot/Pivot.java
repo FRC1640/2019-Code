@@ -6,13 +6,15 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.Servo;
 import frc.utilities.TimingUtil2;
 import frc.utilities.Vector2;
 
 public class Pivot {
 
 	private CANSparkMax driveMotor;
-	private WPI_TalonSRX steerMotor;
+	private CANSparkMax steerMotor;
+	private Servo servo;
 	private AnalogInput resolver;
 	private PIDController steerPidController;
 
@@ -53,10 +55,11 @@ public class Pivot {
 		enabled = true;
 
 		driveMotor = new CANSparkMax(config.driveChannel, MotorType.kBrushless);
-		steerMotor = new WPI_TalonSRX(config.steerChannel) {
+		steerMotor = new CANSparkMax(config.steerChannel, MotorType.kBrushless) {
 			@Override
 			public void pidWrite (double output) {
 				super.pidWrite(output);
+				// if ("FL".equals(config.name)) { System.out.println(output); }
 			}
 		};
 
@@ -77,21 +80,21 @@ public class Pivot {
 
 		};
 
-		steerPidController = new PIDController(1.0, 0.0, 0.01, 0.0, resolver, steerMotor, 0.02); // TODO: PID values
-		// steerPidController = new PIDController(1.0, 0.01, 0.001, 0.0, resolver, steerMotor, 0.02); // TODO: PID values
+		// steerPidController = new PIDController(1.0, 0.0, 0.0075, 0.0, resolver, steerMotor, 0.02); // TODO: PID values
+		steerPidController = new PIDController(0.625, 0.0, 0.005, 0.0, resolver, steerMotor, 0.02); // TODO: PID values
 
 		lastTime = TimingUtil2.getElapsedTimeInSeconds();
 		calibratedEncoderCount = 0;
-		lastEncoderCount = steerMotor.getSelectedSensorPosition(0);
+		// lastEncoderCount = steerMotor.getSelectedSensorPosition(0);
 
 		// Thread to track encoder counts
 		TimingUtil2.registerRecurringCallback(0, 20, () -> {
 			double time = TimingUtil2.getElapsedTimeInSeconds();
 			double dt = (time - lastTime);
 
-			int currentCount = steerMotor.getSelectedSensorPosition(0);
-			int dCount = (currentCount - lastEncoderCount) * (flipDrive ? -1 : 1);
-			calibratedEncoderCount += dCount;
+			// int currentCount = steerMotor.getSelectedSensorPosition(0);
+			// int dCount = (currentCount - lastEncoderCount) * (flipDrive ? -1 : 1);
+			// calibratedEncoderCount += dCount;
 			// maybe not quite this...
 
 			// if (last5Counts.size() == 5) { last5Counts.pop(); }
@@ -106,7 +109,7 @@ public class Pivot {
 			// instantVelocity = (dt == 0) ? instantVelocity : (1.0 * dCount / dt); // whatever it was last, I guess...
 
 			lastTime = time;
-			lastEncoderCount = currentCount;
+			// lastEncoderCount = currentCount;
 		});
 	}
 
@@ -156,6 +159,10 @@ public class Pivot {
 	 */
 	public boolean getFlipDrive () {
 		return flipDrive;
+	}
+
+	public double getNeoSpeed () {
+		return driveMotor.getEncoder().getVelocity();
 	}
 
 	/**
@@ -263,7 +270,7 @@ public class Pivot {
 	}
 
 	public double getInstantVelocity () {
-		return steerMotor.getSelectedSensorVelocity(0)*10;
+		return 0;
 		// return instantVelocity;
 		// double vel = Math.abs(driveMotor.getEncoder().getVelocity());
 		// maxVel = Math.max(vel, maxVel);

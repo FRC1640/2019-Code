@@ -160,14 +160,14 @@ public class LightArrayAlignmentController implements IDriveController {
 
 			case GUIDED_STRAFE: {
 				if (onChange) {
-					swerveController.drive(0.0, 0.0, 0.0);
+					// swerveController.drive(0.0, 0.0, 0.0);
 					x2Control.enable();
 				}
 				if (Double.isNaN(lineArraySensor.getNormalized())) {
-					swerveController.drive(
-						0.3 * driverController.getAxis(Axis.LX), 
-						0.3 * driverController.getAxis(Axis.LY), 
-						x2Pid);
+					// swerveController.drive(
+						// 0.3 * driverController.getAxis(Axis.LX), 
+						// 0.3 * driverController.getAxis(Axis.LY), 
+						// x2Pid);
 				} else {
 					nextState = AlignState.AUTO_STRAFE;
 				}
@@ -181,7 +181,7 @@ public class LightArrayAlignmentController implements IDriveController {
 					noSensorCounter = 0;
 				}
 
-				swerveController.drive(lineArrayX1, 0.0, 0.0);
+				// swerveController.drive(lineArrayX1, 0.0, 0.0);
 
 				// if (Robot.wasCargoLastAction()) {
 					
@@ -235,7 +235,7 @@ public class LightArrayAlignmentController implements IDriveController {
 						}
 					});
 				}
-				swerveController.drive(lineArrayX1, forwardSpeed, x2Pid);
+				// swerveController.drive(lineArrayX1, forwardSpeed, x2Pid);
 			} break;
 
 			case AUTO_HATCH: {
@@ -252,12 +252,12 @@ public class LightArrayAlignmentController implements IDriveController {
 						nextState = AlignState.STOPPED;						
 					}
 				}
-				swerveController.drive(0.0, 0.0, 0.0);
+				// swerveController.drive(0.0, 0.0, 0.0);
 			} break;
 
 			case STOPPED: {
 				if (onChange) {		
-					swerveController.drive(0.0, 0.0, 0.0);
+					// swerveController.drive(0.0, 0.0, 0.0);
 					Devices.getIntake().ejectGrabber(0.0);
 					onComplete.run();
 				}

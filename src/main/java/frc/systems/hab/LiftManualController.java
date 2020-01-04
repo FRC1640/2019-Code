@@ -11,7 +11,7 @@ public class LiftManualController implements IHabController {
 
 	public LiftManualController (Hab hab) {
 		this.hab = hab;
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 	}
 	/**
 	* Activates the objects in the class 

@@ -35,7 +35,7 @@ public class LiftNormalController implements IHabController {
 		hab = Devices.getHab();
 		grabber = Devices.getGrabber();
 		hab = Devices.getHab();
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 
 	}
 

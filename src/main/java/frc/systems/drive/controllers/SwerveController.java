@@ -2,6 +2,7 @@ package frc.systems.drive.controllers;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.ArrayList;
 
 import frc.robot.Devices;
 import frc.robot.Gyro;
@@ -96,10 +97,11 @@ public class SwerveController {
 
 	public void drivePolar (double mag, double angD, double x2) {
 		double angR = Math.toRadians(angD);
-		drive(mag * Math.cos(angR), mag * Math.sin(angR), x2);
+		// drive(mag * Math.cos(angR), mag * Math.sin(angR), x2);
 	}
 
-	public void drive (double x1, double y1, double x2) {
+	public void drive (double x1, double y1, double x2, double servos, boolean isSlow) {
+
 		// Clamp x1, y1, and x2 to be between -1 and 1
 		// Really only matters for x2, since that can go over for gyro-correction
 		x1 = Math.max(-1.0, Math.min(x1, 1.0));
@@ -124,12 +126,28 @@ public class SwerveController {
 
 		// if (Math.abs(x2) < 1e-10) { x2 = 1e-10; }
 
+		ArrayList<Double> arrayList = new ArrayList<Double>();
+
 		double max = 0.0;
 		for (Pivot piv : pivotMap.keySet()) {
 			Vector2 vt = piv.getPosition().copy().rotateD(-90.0).unit().multiply(x2).add(tVec);
 			max = Math.max(max, vt.magnitude());
 			pivotMap.get(piv).set(vt);
+
+			// if (piv.getName.equals("FR")) {
+			// 	System.out.println(vt.magnitude());
+			// }
+			// ((CVTPivot)piv).setServoAngle(180);
+			// arrayList.add(piv.getMinVoltage());
+			// arrayList.add(piv.getMaxVoltage());
+			// arrayList.add(piv.getRawVoltage());
+			// arrayList.add(piv.getPivotAngleD());
+			// arrayList.add(piv.getTargetAngleD());
+			// System.out.format("%3.3f, %3.3f, %3.3f, %3.3f\n", ((CVTPivot)piv).getPivotAngleD());
 		}
+
+		// System.out.format("%3.3f, %3.3f, \t%3.3f, %3.3f\n", arrayList.toArray(new Double[4]));
+		// System.out.format("%3.3f, %3.3f, %3.3f, %3.3f\n", arrayList.toArray(new Double[4]));
 		
 		double s = Math.max(Math.sqrt(x1*x1 + y1*y1), Math.abs(x2));
 
@@ -144,7 +162,7 @@ public class SwerveController {
 
 		/* *********** PIVOT CONTROL UPDATES *********** */
 
-		double minPivotSpeed = OldCvtController.getMinSpeed(pivotMap.keySet());
+		// double minPivotSpeed = OldCvtController.getMinSpeed(pivotMap.keySet());
 
 		for (Entry<Pivot,Vector2> entry : pivotMap.entrySet()) {
 			Pivot piv = entry.getKey();
@@ -153,17 +171,25 @@ public class SwerveController {
 			double mag = v.magnitude();
 
 			if(!habDrivePivots) {
-				piv.setSpeed((cvtMode == CvtMode.SHIFTING) ? OldCvtController.calculateMotorSpeed(mag) : mag);
+				((CVTPivot)piv).setSpeed(mag, isSlow);
 
 				if (v.magnitude() != 0) { piv.setTargetAngleR(v.angleR()); }
 
 				try {
-					((CVTPivot) piv).setTransmission((cvtMode == CvtMode.SHIFTING) ? OldCvtController.calculateServoAngle(mag, minPivotSpeed) : cvtMode.getServoAngle());
+					// ((CVTPivot) piv).setTransmission((cvtMode == CvtMode.SHIFTING) ? OldCvtController.calculateServoAngle(mag, minPivotSpeed) : cvtMode.getServoAngle());
 				} catch (Exception e) {
 					LogUtil.warn(getClass(), String.format("%s is not a CVTPivot!", piv.getName()));
 				}
 			}
 
+		}
+	}
+
+	public void testDrive (double x1, double y1) {
+		for (Pivot piv : pivotMap.keySet()) {
+			piv.setMotorDirect(x1);
+			piv.setRotationSpeed(y1);
+			System.out.println(((CVTPivot)piv).getPivotAngleD());
 		}
 	}
 

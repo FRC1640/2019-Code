@@ -12,7 +12,6 @@ import frc.systems.grabber.Grabber;
 import frc.systems.hab.Hab;
 import frc.systems.intake.Intake;
 import frc.systems.vision.Limelight;
-import frc.utilities.ProximitySensor;
 import frc.utilities.Vector2;
 
 public class Devices {
@@ -26,8 +25,6 @@ public class Devices {
 	private HashMap<Pivot,Vector2> pivotMap;
 	private Limelight limelight;
 	private DigitalInput lightSensor;
-	private ProximitySensor proxFront;
-	private ProximitySensor proxBack;
 	private Controller driverController;
 	private Controller operatorController;
 	private Controller habController;
@@ -36,33 +33,23 @@ public class Devices {
 	private SwerveController swerveController;
 
 	private Devices () {
-		hab = new Hab();
-		intake =  new Intake(11, 6, 0, 1, 4);
-		grabber = new Grabber(7, 2);
-		// lift = new Lift(false, false, 3, 2);
-		limelight = new Limelight();
-		proxFront = new ProximitySensor(4);
-		proxBack = new ProximitySensor(5);
 		gyro = new Gyro();
-		// lightSensor = new DigitalInput(0);
 
 		PivotConfig.loadConfigs("/home/lvuser/deploy/config/pivotcfg.json");
 		pivotMap = new HashMap<>();
 
 		driverController = new Controller(0);
-		operatorController = new Controller(1);
-		habController = new Controller(2);
 
 		pivotMap.put(new CVTPivot("1"), new Vector2()); // FL
 		pivotMap.put(new CVTPivot("2"), new Vector2()); // FR
 		pivotMap.put(new CVTPivot("3"), new Vector2()); // BL
 		pivotMap.put(new CVTPivot("4"), new Vector2()); // BR
 
-		compressor = new Compressor();
-		compressor.setClosedLoopControl(true);
+		// compressor = new Compressor();
+		// compressor.setClosedLoopControl(true);
 
 		lineArraySensor = null;
-		lineArraySensor = new LineArray();
+		// lineArraySensor = new LineArray();
 
 		swerveController = new SwerveController(pivotMap);
 	}
@@ -101,25 +88,17 @@ public class Devices {
 		return instance.lightSensor;
 	}
 
-	public static ProximitySensor getFrontProx () {
-		return instance.proxFront;
-	}
-
-	public static ProximitySensor getBackProx () {
-		return instance.proxBack;
-	}
-
 	public static Controller getDriverController () {
 		return instance.driverController;
 	}
 	
-	public static Controller getOperatorController () {
-		return instance.operatorController;
-	}
+	// public static Controller getOperatorController () {
+	// 	return instance.operatorController;
+	// }
 
-	public static Controller getHabController () {
-		return instance.habController;
-	}
+	// public static Controller getHabController () {
+	// 	return instance.habController;
+	// }
 
 	public static Gyro getGyro () {
 		return instance.gyro;

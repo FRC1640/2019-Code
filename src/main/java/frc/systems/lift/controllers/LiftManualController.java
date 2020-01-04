@@ -13,7 +13,7 @@ public class LiftManualController implements IHabController {
 	private Hab hab;
 
 	public LiftManualController () {
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 		hab = Devices.getHab();	
 	}
 

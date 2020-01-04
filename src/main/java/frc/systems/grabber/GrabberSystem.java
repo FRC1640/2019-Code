@@ -61,7 +61,7 @@ public class GrabberSystem extends RobotSystem {
 	public void init() {
 
 		driveController = Devices.getDriverController();
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 
 		/**
 		 * DRIVER CONTROLS

@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.robot.Controller;
 import frc.robot.Devices;
 import frc.robot.Controller.Button;
+import frc.robot.Controller.Axis;
 import frc.robot.Controller.ButtonEvent;
 import frc.systems.drive.controllers.LightArrayAlignmentController;
 import frc.systems.drive.controllers.LimelightAlignmentAutoController;
@@ -16,12 +17,13 @@ import frc.systems.drive.controllers.CargoToFeederAutoController;
 import frc.systems.drive.controllers.IDriveController;
 import frc.systems.drive.controllers.OperatorDriveController;
 import frc.systems.drive.controllers.SwerveController;
+import frc.systems.drive.controllers.TestCVTController;
 import frc.systems.drive.controllers.SwerveController.CvtMode;
 import frc.systems.drive.controllers.SwerveController.SwerveMode;
 
 public class DriveSystem extends RobotSystem {
 
-	public static enum DriveController { NORMAL, OPERATOR, AUTON_CARGO_TO_FEEDER, AUTON_ROCKET_TO_FEEDER, LIMELIGHT_ALIGN, LIGHT_ALIGN; }
+	public static enum DriveController { NORMAL, OPERATOR, AUTON_CARGO_TO_FEEDER, AUTON_ROCKET_TO_FEEDER, LIMELIGHT_ALIGN, LIGHT_ALIGN, TEST; }
 
 	private SwerveController swerveController;
 	private Controller driverController;
@@ -42,20 +44,25 @@ public class DriveSystem extends RobotSystem {
 	@Override
 	public void init () {
 		driverController = Devices.getDriverController();
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 
 		Runnable returnToNormalController = () -> {
 			callback("State machine complete, returning control to Normal.");
-			nextDriveController = DriveController.NORMAL;
+			nextDriveController = DriveController.TEST;
 		};
 
 		driveControllerMap = new HashMap<>();
 		driveControllerMap.put(DriveController.NORMAL, new NormalDriveController(swerveController));
-		driveControllerMap.put(DriveController.OPERATOR, new OperatorDriveController(swerveController));
-		driveControllerMap.put(DriveController.AUTON_CARGO_TO_FEEDER, new CargoToFeederAutoController(swerveController, returnToNormalController));
-		driveControllerMap.put(DriveController.LIMELIGHT_ALIGN, new LimelightAlignmentAutoController(swerveController, returnToNormalController));
-		driveControllerMap.put(DriveController.LIGHT_ALIGN, new LightArrayAlignmentController(swerveController, returnToNormalController));
+		// driveControllerMap.put(DriveController.OPERATOR, new OperatorDriveController(swerveController));
+		// driveControllerMap.put(DriveController.AUTON_CARGO_TO_FEEDER, new CargoToFeederAutoController(swerveController, returnToNormalController));
+		// driveControllerMap.put(DriveController.LIMELIGHT_ALIGN, new LimelightAlignmentAutoController(swerveController, returnToNormalController));
+		// driveControllerMap.put(DriveController.LIGHT_ALIGN, new LightArrayAlignmentController(swerveController, returnToNormalController));
 		driveControllerMap.put(DriveController.AUTON_ROCKET_TO_FEEDER, new BackRocketToFeederAutoController(swerveController, returnToNormalController));
+		try {
+			// driveControllerMap.put(DriveController.TEST, new TestCVTController());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		currentDriveController = null;
 
@@ -69,15 +76,20 @@ public class DriveSystem extends RobotSystem {
 		
 		driverController.registerButtonListener(ButtonEvent.PRESS, Button.Y, () -> {
 			callback("switch to light align mode...");
-			nextDriveController = DriveController.LIGHT_ALIGN;
-		});
-
-		driverController.registerButtonListener(ButtonEvent.RELEASE, Button.Y, () -> {
-			if (currentDriveController == DriveController.LIGHT_ALIGN) {
-				callback("switch back to normal mode...");
+			if (nextDriveController == DriveController.NORMAL) {
+				nextDriveController = DriveController.TEST;
+			}
+			else {
 				nextDriveController = DriveController.NORMAL;
 			}
 		});
+
+		// driverController.registerButtonListener(ButtonEvent.RELEASE, Button.Y, () -> {
+		// 	if (currentDriveController == DriveController.LIGHT_ALIGN) {
+		// 		callback("switch back to normal mode...");
+		// 		nextDriveController = DriveController.NORMAL;
+		// 	}
+		// });
 
 		// driverController.registerButtonListener(ButtonEvent.PRESS, Button.LJ, () -> {
 		// 	callback("switch to limelight align mode...");
@@ -98,39 +110,40 @@ public class DriveSystem extends RobotSystem {
 			}
 		});
 
+
 		/*
 		 * OPERATOR CONTROLS
 		 */
-		opController.registerButtonListener(ButtonEvent.PRESS, Button.X, () -> {
-			if (currentDriveController == DriveController.NORMAL) {
-				callback("enter operator precision mode...");
-				nextDriveController = DriveController.OPERATOR;
-			} else if (currentDriveController == DriveController.OPERATOR) {
-				callback("leave operator precision mode...");
-				nextDriveController = DriveController.NORMAL;
-			}
-		});
+		// opController.registerButtonListener(ButtonEvent.PRESS, Button.X, () -> {
+		// 	if (currentDriveController == DriveController.NORMAL) {
+		// 		callback("enter operator precision mode...");
+		// 		nextDriveController = DriveController.OPERATOR;
+		// 	} else if (currentDriveController == DriveController.OPERATOR) {
+		// 		callback("leave operator precision mode...");
+		// 		nextDriveController = DriveController.NORMAL;
+		// 	}
+		// });
 
-		opController.registerButtonListener(ButtonEvent.PRESS, Button.Y, () -> {
-			callback("Switch to auton mode");
+		// opController.registerButtonListener(ButtonEvent.PRESS, Button.Y, () -> {
+		// 	callback("Switch to auton mode");
 
-			double angleD = Devices.getGyro().getYaw();
-			double minRocket = Math.min(Math.abs(angleD - 208.75), Math.abs(angleD - 151.25));
-			double minCargo  = Math.min(Math.abs(angleD - 90), Math.abs(angleD - 270));
+		// 	double angleD = Devices.getGyro().getYaw();
+		// 	double minRocket = Math.min(Math.abs(angleD - 208.75), Math.abs(angleD - 151.25));
+		// 	double minCargo  = Math.min(Math.abs(angleD - 90), Math.abs(angleD - 270));
 
-			if (minRocket < minCargo) {
-				nextDriveController = DriveController.AUTON_ROCKET_TO_FEEDER;
-			} else {
-				nextDriveController = DriveController.AUTON_CARGO_TO_FEEDER;
-			}
-		});
+		// 	if (minRocket < minCargo) {
+		// 		nextDriveController = DriveController.AUTON_ROCKET_TO_FEEDER;
+		// 	} else {
+		// 		nextDriveController = DriveController.AUTON_CARGO_TO_FEEDER;
+		// 	}
+		// });
 
-		opController.registerButtonListener(ButtonEvent.RELEASE, Button.Y, () -> {
-			if (currentDriveController == DriveController.AUTON_CARGO_TO_FEEDER || currentDriveController == DriveController.AUTON_ROCKET_TO_FEEDER) {
-				callback("Switch out of auton mode...");
-				nextDriveController = DriveController.NORMAL;
-			}
-		});
+		// opController.registerButtonListener(ButtonEvent.RELEASE, Button.Y, () -> {
+		// 	if (currentDriveController == DriveController.AUTON_CARGO_TO_FEEDER || currentDriveController == DriveController.AUTON_ROCKET_TO_FEEDER) {
+		// 		callback("Switch out of auton mode...");
+		// 		nextDriveController = DriveController.NORMAL;
+		// 	}
+		// });
 		
 	}
 
@@ -189,9 +202,6 @@ public class DriveSystem extends RobotSystem {
 
 		driverController.vibrate(RumbleType.kLeftRumble, (rumbleDriver) ? 0.1 : 0.0);
 		driverController.vibrate(RumbleType.kRightRumble, (rumbleDriver) ? 0.1 : 0.0);
-
-		opController.vibrate(RumbleType.kLeftRumble, (rumbleOperator) ? 0.1 : 0.0);
-		opController.vibrate(RumbleType.kRightRumble, (rumbleOperator) ? 0.1 : 0.0);
 
 		/* *********** CONTROLLERS *********** */
 

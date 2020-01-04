@@ -15,7 +15,7 @@ public class HabManualController implements IHabController {
 
 	public HabManualController (Hab hab) {
 		this.hab = hab;
-		habController = Devices.getHabController();
+		// habController = Devices.getHabController();
 	}
 	/**
 	* Activates the objects in the class

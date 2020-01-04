@@ -23,7 +23,7 @@ public class IntakeSystem extends RobotSystem {
 	@Override
 	public void init() {
 		driverController = Devices.getDriverController();
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 		intake = Devices.getIntake();
 		intakeSpeed = .75;
 		outtakeSpeed = 1.0;

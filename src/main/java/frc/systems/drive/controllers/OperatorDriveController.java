@@ -16,7 +16,7 @@ public class OperatorDriveController implements IDriveController {
     * @param swerveController passes in the swerve controller class
     */
 	public OperatorDriveController (SwerveController swerveController) {
-		opController = Devices.getOperatorController();
+		// opController = Devices.getOperatorController();
 		this.swerveController = swerveController;
 	}
 	/**
@@ -49,7 +49,7 @@ public class OperatorDriveController implements IDriveController {
 		/**
 		* Sets the axis of the drive to the variables
 		*/
-		swerveController.drive(x1, y1, x2);
+		// swerveController.drive(x1, y1, x2);
 	}
 
 }

@@ -165,7 +165,7 @@ public class BackRocketToFeederAutoController implements IDriveController {
 					swerveController.setSwerveMode(SwerveMode.ROBOT_CENTRIC);
 					TimingUtil2.registerOneTimeCallback(600, () -> { nextState = AutoState.MOVE_AND_ROTATE; });
 				}
-				swerveController.drive(strafeSpeed, -0.6, 0);
+				// swerveController.drive(strafeSpeed, -0.6, 0);
 			} break;
 
 			case MOVE_AND_ROTATE: {
@@ -177,7 +177,7 @@ public class BackRocketToFeederAutoController implements IDriveController {
 					gyroPid.reset();
 					gyroPid.enable();
 				}
-				swerveController.drivePolar(1.0, targetDriveAngleD, gyroX2);
+				// swerveController.drivePolar(1.0, targetDriveAngleD, gyroX2);
 				if (Math.abs(gyro.getYaw() - targetGyroAngleD) < 10) { nextState = AutoState.DRIVE_TO_TARGET; }
 			} break;
 
@@ -192,7 +192,7 @@ public class BackRocketToFeederAutoController implements IDriveController {
 					cameraPid.enable();
 					swerveController.setSwerveMode(SwerveMode.ROBOT_CENTRIC);
 				}
-				swerveController.drive(0.0, 0.75, cameraX2);
+				// swerveController.drive(0.0, 0.75, cameraX2);
 				if (limelight.getTargetArea() > 2.5) {
 					nextState = AutoState.DONE;
 				}
@@ -207,7 +207,7 @@ public class BackRocketToFeederAutoController implements IDriveController {
 					limelight.setLEDOn(LedEnum.FORCE_OFF);
 					onComplete.run();
 				}
-				swerveController.drive(0.0, 0.0, 0.0);
+				// swerveController.drive(0.0, 0.0, 0.0);
 			} break;
 		}
 

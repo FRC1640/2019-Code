@@ -91,7 +91,7 @@ public class LimelightAlignmentAutoController implements IDriveController {
 					cameraPid.enable();
 					swerveController.setSwerveMode(SwerveMode.ROBOT_CENTRIC);
 				}
-				swerveController.drive(0.0, 0.75, cameraX2);
+				// swerveController.drive(0.0, 0.75, cameraX2);
 				if (limelight.getTargetArea() > 2.5) {
 					nextState = AutoState.DONE;
 				}
@@ -103,7 +103,7 @@ public class LimelightAlignmentAutoController implements IDriveController {
 					limelight.setLEDOn(LedEnum.FORCE_OFF);
 					onComplete.run();
 				}
-				swerveController.drive(0.0, 0.0, 0.0);
+				// swerveController.drive(0.0, 0.0, 0.0);
 			} break;
 
 		}

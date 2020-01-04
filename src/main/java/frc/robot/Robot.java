@@ -10,7 +10,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.systems.drive.DriveSystem;
 import frc.systems.grabber.GrabberSystem;
-import frc.systems.hab.HabSystem;
 import frc.systems.intake.IntakeSystem;
 import frc.systems.vision.Limelight.LedEnum;
 import frc.systems.vision.Limelight.StreamEnum;
@@ -78,9 +77,9 @@ public class Robot extends TimedRobot {
 		Devices.init();
 
 		new DriveSystem();
-		new IntakeSystem();
-		new GrabberSystem();
-		new HabSystem();
+		// new IntakeSystem();
+		// new GrabberSystem();
+		// new HabSystem();
 
 		// TimingUtil2.registerRecurringCallback(0, 1000, () -> {
 		// 	if (Devices.getCompressor().enabled()) { count3++; }
@@ -91,11 +90,11 @@ public class Robot extends TimedRobot {
 		// });
 	}
 
-	@Override public void disabledInit () { LogUtil.log("ROBOT_STATE", "DISABLED"); Devices.getLimelight().setLEDOn(LedEnum.FORCE_OFF); }
+	@Override public void disabledInit () { LogUtil.log("ROBOT_STATE", "DISABLED");  }
 
 	@Override public void autonomousInit () { LogUtil.log("ROBOT_STATE", "AUTON ENABLED"); }
 
-	@Override public void teleopInit () { LogUtil.log("ROBOT_STATE", "TELEOP ENABLED"); Devices.getLimelight().setStreamMode(StreamEnum.PiP_2); }
+	@Override public void teleopInit () { LogUtil.log("ROBOT_STATE", "TELEOP ENABLED");  }
 
 	@Override public void testInit () { LogUtil.log("ROBOT_STATE", "TEST ENABLED"); }
 	
@@ -106,18 +105,18 @@ public class Robot extends TimedRobot {
 	@Override public void autonomousPeriodic () { }
 
 	@Override public void teleopPeriodic () {
-		long now = System.currentTimeMillis();
-		if (now - count2 >= 1000) {
-			if (Devices.getCompressor().enabled()) {
-				count3++;
-			}
-			count2 = now;
-		}
-		if (now - count >= 30000) {
-			LogUtil.log("COMPRESSOR", String.format("Compressor was on %.2f%% of the time in the last 30 seconds.", (count3/0.300)));
-			count3 = 0;
-			count = now;
-		}
+		// long now = System.currentTimeMillis();
+		// if (now - count2 >= 1000) {
+		// 	if (Devices.getCompressor().enabled()) {
+		// 		count3++;
+		// 	}
+		// 	count2 = now;
+		// }
+		// if (now - count >= 30000) {
+		// 	LogUtil.log("COMPRESSOR", String.format("Compressor was on %.2f%% of the time in the last 30 seconds.", (count3/0.300)));
+		// 	count3 = 0;
+		// 	count = now;
+		// }
 	}
 
 	@Override public void testPeriodic () { }
